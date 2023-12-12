@@ -2,6 +2,7 @@
 #include <vector>
 #include <bits/stdc++.h>
 #include <cctype>
+#include <string>
 
 #include "fenToPosition.hpp"
 //#include "constants.hpp"
@@ -9,8 +10,49 @@
 
 using namespace std;
 
-void offsetMoveGeneration(int color[64], int piece[64], int sideToMove, int notSideToMove) {
-    int counter = 0;
+string getSquare(int i) {
+    string file;
+    switch (i%8) {
+        case 0:
+            file = 'a';
+            break;
+        case 1:
+            file = 'b';
+            break;
+        case 2:
+            file = 'c';
+            break;
+        case 3:
+            file = 'd';
+            break;
+        case 4:
+            file = 'e';
+            break;
+        case 5:
+            file = 'f';
+            break;
+        case 6:
+            file = 'g';
+            break;
+        case 7:
+            file = 'h';
+            break;
+        default:
+            file = "error";
+            break;
+    }
+
+    int row = i/8+1;
+    
+    return file + to_string(row);
+}
+
+void getMove(int i, int j) {
+    cout << getSquare(i) << " -> " << getSquare(j) << endl;
+}
+
+vector<int[]> offsetMoveGeneration(int color[64], int piece[64], int sideToMove, int notSideToMove) {
+    vector<int[]> moveList;
     for (int i = 0; i < 64; i++) {
         if (color[i] == sideToMove) {
             int prePiece = piece[i];
@@ -22,13 +64,13 @@ void offsetMoveGeneration(int color[64], int piece[64], int sideToMove, int notS
                         if (color[n] != EMPTY) {
                             if (color[n] == notSideToMove) {
                                 cout << "Capture move" << "\n";
-                                counter++;
+                                moveList.push_back({i, n});
                                 break;
                             }
-                            
+                            if (color[n] == sideToMove) break;
                         }
                         cout << "Quiet move" << "\n";
-                        counter++;
+                        moveList.push_back({i, n});
                         if (!slide[prePiece]) break;
                     }
                 }
@@ -36,43 +78,44 @@ void offsetMoveGeneration(int color[64], int piece[64], int sideToMove, int notS
                 if (color[i]==WHITE){
                     if (color[i-8]==EMPTY) {
                         cout << "Pawn move" << "\n";
-                        counter++;
-                        if (56<=i && i<=63 && sideToMove == WHITE && mailbox[mailbox64[i]-20]!=-1 && color[i-16]==EMPTY) {
+                        moveList.push_back({i, i-8});
+                        if (48<=i && i<=55 && sideToMove == WHITE && mailbox[mailbox64[i]-20]!=-1 && color[i-16]==EMPTY) {
                             cout << "Douple pawn move" << "\n";
-                            counter++;
+                            moveList.push_back({i, i-16});
                         }
                     }
                     if (mailbox[mailbox64[i]-9]!=-1 && color[i-7]==notSideToMove) {
                         cout << "Pawn capture" << "\n";
-                        counter++;
+                        moveList.push_back({i, i-7});
                     }
                     if (mailbox[mailbox64[i]-11]!=-1 && color[i-9]==notSideToMove) {
                         cout << "Pawn capture" << "\n";
-                        counter++;
+                        moveList.push_back({i, i-9});
                     }
                 }
                 if (color[i]==BLACK){
                     if (color[i+8]==EMPTY) {
                         cout << "Pawn move" << "\n";
-                        counter++;
+                        moveList.push_back({i, i+8});
                         if (8<=i && i<=15 && sideToMove == BLACK && mailbox[mailbox64[i]+20]!=-1 && color[i+16]==EMPTY) {
                             cout << "Douple pawn move" << "\n";
-                            counter++;
+                            moveList.push_back({i, i+16});
                         }
                     }
                     if (mailbox[mailbox64[i]+9]!=-1 && color[i+7]==notSideToMove) {
                         cout << "Pawn capture" << "\n";
-                        counter++;
+                        moveList.push_back({i, i+7});
                     }
                     if (mailbox[mailbox64[i]+11]!=-1 && color[i+9]==notSideToMove) {
                         cout << "Pawn capture" << "\n";
-                        counter++;
+                        moveList.push_back({i, i+9});
                     }
                 }
             }
         }
     }
-    cout << counter << endl;
+
+    return moveList;
 }
 
 
@@ -121,6 +164,22 @@ void printBoard(int color[64], int piece[64]) {
     cout << "\n";
 }
 
+
+
+void printColor(int color[64], int piece[64]) {
+    for (int i = 0; i < 64; i++) {
+        if (i != 0 && i % 8 == 0) {
+            cout << "\n";
+        }
+
+
+        cout << color[i];
+    }
+    cout << "\n";
+}
+
+
+
 int main() {
     int color[64];
     int piece[64];
@@ -131,7 +190,7 @@ int main() {
     copy(dataFenToPosition.at(0).begin(), dataFenToPosition.at(0).end(), color);
     copy(dataFenToPosition.at(1).begin(), dataFenToPosition.at(1).end(), piece);
 
-    //printBoard(color, piece);
+    printColor(color, piece);
     offsetMoveGeneration(color, piece, WHITE, BLACK);
 
 
