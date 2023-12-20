@@ -7,7 +7,7 @@ def getSquare(i):
 
     return file + rank
 
-def getMove(i, j, enPassant = False):
+def generateBoard(i, j, enPassant = False):
     print(getSquare(i) + " -> " + getSquare(j))
 
 
@@ -18,29 +18,35 @@ def offsetMoveGeneration(color, piece, sideToMove, xSideToMove, enPassantCheck =
                 if sideToMove == WHITE:
                     #must check if i-7 is on the same side with mailbox
                     if i >= 8 and color[i - 8] == 0:
-                        getMove(i, i - 8)
+                        generateBoard(i, i - 8)
                         if i < 16 and color[i - 16] == 0:
-                            getMove(i, i - 16)
-                    if i >= 7 and color[i - 7] == xSideToMove:
-                        getMove(i, i - 7)
-                    if i >= 9 and color[i - 9] == xSideToMove:
-                        getMove(i, i - 9)
+                            generateBoard(i, i - 16)
+                    if i >= 7 and color[i - 7] == xSideToMove and mailbox[mailbox64[i] - 9] != -1:
+                        generateBoard(i, i - 7)
+                    if i >= 9 and color[i - 9] == xSideToMove and mailbox[mailbox64[i] - 11] != -1:
+                        generateBoard(i, i - 9)
 
                     
                     if enPassantCheck and i >= 32 and i <= 39:
-                        if piece[i - 1] == PAWN and color[i - 1] == xSideToMove and enPassantFile == (i % 8) - 1:
-                            getMove(i, i - 9, True)
-                        if piece[i + 1] == PAWN and color[i + 1] == xSideToMove and enPassantFile == (i % 8) + 1:
-                            getMove(i, i - 7, True)
+                        if piece[i - 1] == PAWN and color[i - 1] == xSideToMove and enPassantFile == (i % 8) - 1 and mailbox[mailbox64[i] - 11] != -1:
+                            generateBoard(i, i - 9, True)
+                        if piece[i + 1] == PAWN and color[i + 1] == xSideToMove and enPassantFile == (i % 8) + 1 and mailbox[mailbox64[i] - 9] != -1:
+                            generateBoard(i, i - 7, True)
                 else:
                     if i <= 55 and color[i + 8] == 0:
-                        getMove(i, i + 8)
+                        generateBoard(i, i + 8)
                         if i > 47 and color[i + 16] == 0:
-                            getMove(i, i + 16)
-                    if i <= 56 and color[i + 7] == xSideToMove:
-                        getMove(i, i + 7)
-                    if i <= 54 and color[i + 9] == xSideToMove:
-                        getMove(i, i + 9)
+                            generateBoard(i, i + 16)
+                    if i <= 56 and color[i + 7] == xSideToMove and mailbox[mailbox64[i] + 9] != -1:
+                        generateBoard(i, i + 7)
+                    if i <= 54 and color[i + 9] == xSideToMove and mailbox[mailbox64[i] + 11] != -1:
+                        generateBoard(i, i + 9)
+
+                    if enPassantCheck and i >= 24 and i <= 31:
+                        if piece[i - 1] == PAWN and color[i - 1] == xSideToMove and enPassantFile == (i % 8) - 1 and mailbox[mailbox64[i] + 7] != -1:
+                            generateBoard(i, i + 7, True)
+                        if piece[i + 1] == PAWN and color[i + 1] == xSideToMove and enPassantFile == (i % 8) + 1 and mailbox[mailbox64[i] + 9] != -1:
+                            generateBoard(i, i + 9, True)
             
             else:
                 for j in range(offsets[piece[i]]):
@@ -50,11 +56,11 @@ def offsetMoveGeneration(color, piece, sideToMove, xSideToMove, enPassantCheck =
                             break
                         if color[n] != EMPTY:
                             if color[n] == xSideToMove:
-                                getMove(i, n)
+                                generateBoard(i, n)
                                 break
                             if color[n] == sideToMove:
                                 break
-                        getMove(i, n)
+                        generateBoard(i, n)
                         if not slide[piece[i]]:
                             break
 
