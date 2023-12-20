@@ -17,6 +17,44 @@ def shallowCopy(color, piece):
         pieceCopy.append(piece[i])
     return colorCopy, pieceCopy
 
+def checkIfInCheck(color, piece, sideToMove):
+    for i in range(64):
+        if color[i] == sideToMove and piece[i] == KING:
+            kingSquare = i
+            break
+
+    for i in range(64):
+        if color[i] == sideToMove:
+            continue
+        if piece[i] == PAWN:
+            if sideToMove == WHITE:
+                if i + 7 == kingSquare and mailbox[mailbox64[i] + 9] != -1:
+                    return True
+                if i + 9 == kingSquare and mailbox[mailbox64[i] + 11] != -1:
+                    return True
+            else:
+                if i - 7 == kingSquare and mailbox[mailbox64[i] - 9] != -1:
+                    return True
+                if i - 9 == kingSquare and mailbox[mailbox64[i] - 11] != -1:
+                    return True            
+        else:
+            for j in range(offsets[piece[i]]):
+                while True:
+                    n = mailbox[mailbox64[i] + offset[piece[i]][j]]
+                    if n == -1:
+                        break
+                    if color[n] != EMPTY:
+                        if color[n] != sideToMove:
+                            break
+                        if n == kingSquare:
+                            return True
+                        if not slide[piece[i]]:
+                            break
+                    if not slide[piece[i]]:
+                        break
+
+    return False
+
 def generateBoard(boardAfterMoves, color, piece, i, j, enPassant = False):
     if showMoves:
         print(getSquare(i) + " -> " + getSquare(j))
@@ -35,7 +73,8 @@ def generateBoard(boardAfterMoves, color, piece, i, j, enPassant = False):
             colorCopy[j + 8] = EMPTY
             pieceCopy[j + 8] = EMPTY
     
-    boardAfterMoves.append((colorCopy, pieceCopy))
+    if checkIfInCheck(colorCopy, pieceCopy, colorCopy[j]) == False:
+        boardAfterMoves.append((colorCopy, pieceCopy))
 
     return boardAfterMoves
 
