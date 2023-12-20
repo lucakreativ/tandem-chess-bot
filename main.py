@@ -1,7 +1,7 @@
 from constantsChess import *
 from fenToPosition import fenToPosition
 
-showMoves = True
+showMoves = False
 
 def getSquare(i):
     file = "abcdefgh"[i % 8]
@@ -18,6 +18,11 @@ def shallowCopy(color, piece):
     return colorCopy, pieceCopy
 
 def checkIfInCheck(color, piece, sideToMove):
+    if sideToMove == WHITE:
+        xSideToMove = BLACK
+    else:
+        xSideToMove = WHITE
+
     for i in range(64):
         if color[i] == sideToMove and piece[i] == KING:
             kingSquare = i
@@ -37,21 +42,35 @@ def checkIfInCheck(color, piece, sideToMove):
                     return True
                 if i - 9 == kingSquare and mailbox[mailbox64[i] - 11] != -1:
                     return True            
-        else:
+        elif color[i] == xSideToMove:
             for j in range(offsets[piece[i]]):
                 while True:
                     n = mailbox[mailbox64[i] + offset[piece[i]][j]]
                     if n == -1:
                         break
                     if color[n] != EMPTY:
-                        if color[n] != sideToMove:
-                            break
                         if n == kingSquare:
                             return True
-                        if not slide[piece[i]]:
+                        else:
                             break
                     if not slide[piece[i]]:
                         break
+        if False:
+            for j in range(offsets[piece[i]]):
+                while True:
+                    n = mailbox[mailbox64[i] + offset[piece[i]][j]]
+                    if n == -1:
+                        break
+                    if color[n] != EMPTY:
+                        if color[n] == xSideToMove:
+                            boardAfterMoves = generateBoard(boardAfterMoves, color, piece, i, n)
+                            break
+                        if color[n] == sideToMove:
+                            break
+                    boardAfterMoves = generateBoard(boardAfterMoves, color, piece, i, n)
+                    if not slide[piece[i]]:
+                        break
+        
 
     return False
 
@@ -86,7 +105,6 @@ def offsetMoveGeneration(color, piece, sideToMove, xSideToMove, enPassantCheck =
                 if sideToMove == WHITE:
                     if color[i - 8] == EMPTY:
                         boardAfterMoves = generateBoard(boardAfterMoves, color, piece, i, i - 8)
-                        print(color[i - 16])
                         if i <= 55 and color[i - 16] == EMPTY:
                             boardAfterMoves = generateBoard(boardAfterMoves, color, piece, i, i - 16)
                     if i >= 7 and color[i - 7] == xSideToMove and mailbox[mailbox64[i] - 9] != -1:
@@ -167,14 +185,39 @@ def printBoard(color, piece):
 def main():
     color, piece = fenToPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
 
-    printBoard(color, piece)
+    nodes = 0
+    #nodes = perft(color, piece, WHITE, 1)
+    print(nodes)
+
+    #printBoard(color, piece)
 
     moves = offsetMoveGeneration(color, piece, WHITE, BLACK)
-
+    print(len(moves))
     for i in moves:
         printBoard(i[0], i[1])
-        print("..................")
+        print("---------------------")
 
+
+
+def perft(color, piece, sideToMove, depth):
+    #print(depth)
+    if sideToMove == WHITE:
+        xSideToMove = BLACK
+    else:
+        xSideToMove = WHITE
+    nodes = 0
+    moves = offsetMoveGeneration(color, piece, sideToMove, xSideToMove)
+    if depth == 0:
+        print(len(moves))
+        return len(moves)
+    if sideToMove == WHITE:
+        sideToMove = BLACK
+    else:
+        sideToMove = WHITE
+    for i in moves:
+        nodes += perft(i[0], i[1], sideToMove, depth - 1)
+
+    return nodes
 
 if __name__ == "__main__":
     main()
