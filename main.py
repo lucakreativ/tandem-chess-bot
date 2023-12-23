@@ -4,44 +4,88 @@ from fenToPosition import fenToPosition
 def pawnMoveGeneration(color, piece, i, xSideToMove):
     moves = []
     if color[i + 8] == EMPTY:
-        moves.append(i + 8)
+        moves.append((i, i + 8))
 
         if i >= 8 and i <= 15 and color[i + 16] == EMPTY:
-            moves.append(i + 16)
+            moves.append((i, i + 16))
 
 
     if mailbox[mailbox64[i] + 11] != -1 and color[i + 9] == xSideToMove:
-        moves.append(i + 9)
+        moves.append((i, i + 9))
     if mailbox[mailbox64[i] + 9] != -1 and color[i + 11] == xSideToMove:
-        moves.append(i + 7)
+        moves.append((i, i + 7))
 
 
     return moves
 
-def knightMoveGeneration():
-    print("knightMoveGeneration")
+def knightMoveGeneration(color, i, sideToMove):
+    moves = []
+    for offsetMove in offset[1]:
+        square = mailbox[mailbox64[i] + offsetMove]
+        if square != -1 and color[square] != sideToMove:
+            moves.append((i, square))
 
-    return []
+    return moves
 
-def bishopMoveGeneration():
-    print("bishopMoveGeneration")
+def bishopMoveGeneration(color, i, xSideToMove):
+    moves = []
+    for offsetMove in offset[2]:
+        for j in range(1, 8):
+            square = mailbox[mailbox64[i] + offsetMove * j]
+            if square == -1:
+                break
+            elif color[square] == EMPTY:
+                moves.append((i, square))
+            elif color[square] == xSideToMove:
+                moves.append((i, square))
+                break
+            else:
+                break
 
-    return []
+    return moves
 
-def rookMoveGeneration():
-    print("rookMoveGeneration")
+def rookMoveGeneration(color, i, xSideToMove):
+    moves = []
+    for offsetMove in offset[3]:
+        for j in range(1, 8):
+            square = mailbox[mailbox64[i] + offsetMove * j]
+            if square == -1:
+                break
+            elif color[square] == EMPTY:
+                moves.append((i, square))
+            elif color[square] == xSideToMove:
+                moves.append((i, square))
+                break
+            else:
+                break
 
-    return []
+    return moves
 
-def queenMoveGeneration():
-    print("queenMoveGeneration")
+def queenMoveGeneration(color, i, xSideToMove):
+    moves = []
+    for offsetMove in offset[4]:
+        for j in range(1, 8):
+            square = mailbox[mailbox64[i] + offsetMove * j]
+            if square == -1:
+                break
+            elif color[square] == EMPTY:
+                moves.append((i, square))
+            elif color[square] == xSideToMove:
+                moves.append((i, square))
+                break
+            else:
+                break
 
-    return []
+    return moves
 
-def kingMoveGeneration():
-    print("kingMoveGeneration")
+def kingMoveGeneration(color, i, sideToMove):
+    moves = []
+    for offsetMove in offset[5]:
+        square = mailbox[mailbox64[i] + offsetMove]
+        if square != -1 and color[square] != sideToMove:
+            moves.append((i, square))
 
-    return []
+    return moves
 
 
 
@@ -53,15 +97,15 @@ def moveGeneration(color, piece, sideToMove, xSideToMove):
             if piece[i] == PAWN:
                 potentialMoves += pawnMoveGeneration(color, piece, i, xSideToMove)
             elif piece[i] == KNIGHT:
-                potentialMoves += knightMoveGeneration()
+                potentialMoves += knightMoveGeneration(color, i, sideToMove)
             elif piece[i] == BISHOP:
-                potentialMoves += bishopMoveGeneration()
+                potentialMoves += bishopMoveGeneration(color, i, xSideToMove)
             elif piece[i] == ROOK:
-                potentialMoves += rookMoveGeneration()
+                potentialMoves += rookMoveGeneration(color, i, xSideToMove)
             elif piece[i] == QUEEN:
-                potentialMoves += queenMoveGeneration()
+                potentialMoves += queenMoveGeneration(color, i, xSideToMove)
             elif piece[i] == KING:
-                potentialMoves += kingMoveGeneration()
+                potentialMoves += kingMoveGeneration(color, i, sideToMove)
             else:
                 print("ERROR: Invalid piece")
                 return None
@@ -70,8 +114,6 @@ def moveGeneration(color, piece, sideToMove, xSideToMove):
 
 def main():
     color, piece = fenToPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR")
-    print(color)
-    print(piece)
     moveGeneration(color, piece, WHITE, BLACK)
 
 if __name__ == "__main__":
