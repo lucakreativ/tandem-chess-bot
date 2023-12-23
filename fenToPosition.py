@@ -5,7 +5,7 @@ def fenToPosition(fen):
     piece = [-1] * 64
 
     reachedEndOfPosition = False
-    counter = 0
+    counter = 63
     i = 0
     while i < len(fen) and reachedEndOfPosition == False:
         if fen[i] == ' ':
@@ -13,7 +13,7 @@ def fenToPosition(fen):
         elif fen[i] == '/':
             pass
         elif fen[i].isdigit():
-            counter += int(fen[i])
+            counter -= int(fen[i])
         else:
             if fen[i].isupper():
                 color[counter] = WHITE
@@ -36,7 +36,7 @@ def fenToPosition(fen):
                 print("ERROR: Invalid FEN string")
                 return None
             
-            counter += 1
+            counter -= 1
 
         i += 1
         
