@@ -1,4 +1,5 @@
 from constantsChess import *
+from boardOperation import generateBoard
 
 def pawnMoveGeneration(color, i, xSideToMove):
     moves = []
@@ -99,16 +100,7 @@ def kingMoveGeneration(color, i, sideToMove):
     return moves
 
 
-def generateBoard(color, piece, move):
-    copyColor = color.copy()
-    copyPiece = piece.copy()
 
-    copyColor[move[1]] = copyColor[move[0]]
-    copyPiece[move[1]] = copyPiece[move[0]]
-    copyColor[move[0]] = EMPTY
-    copyPiece[move[0]] = -1
-
-    return copyColor, copyPiece
 
 
 def checkIfMoveIsLegal(color, piece, sideToMove, xSideToMove, move):
