@@ -110,6 +110,18 @@ def checkIfMoveIsLegal(color, piece, sideToMove, xSideToMove, move):
             kingSquare = i
             break
 
+    if sideToMove == WHITE:
+        if mailbox[mailbox64[kingSquare] + 11] != -1 and testColor[kingSquare + 9] == xSideToMove and testPiece[kingSquare + 9] == PAWN:
+            return False
+        if mailbox[mailbox64[kingSquare] + 9] != -1 and testColor[kingSquare + 7] == xSideToMove and testPiece[kingSquare + 7] == PAWN:
+            return False
+        
+    if sideToMove == BLACK:
+        if mailbox[mailbox64[kingSquare] - 11] != -1 and testColor[kingSquare - 9] == xSideToMove and testPiece[kingSquare - 9] == PAWN:
+            return False
+        if mailbox[mailbox64[kingSquare] - 9] != -1 and testColor[kingSquare - 7] == xSideToMove and testPiece[kingSquare - 7] == PAWN:
+            return False
+
     for i in range(1, 8):
         square = mailbox[mailbox64[kingSquare] + i * 10]
         if square == -1:
