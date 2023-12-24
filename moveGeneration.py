@@ -1,32 +1,52 @@
 from constantsChess import *
 from boardOperation import generateBoard
 
-def pawnMoveGeneration(color, i, xSideToMove):
+def pawnMoveGeneration(color, i, xSideToMove, enPassantSquare = -2):
     moves = []
     if xSideToMove == BLACK:
+        if mailbox[mailbox64[i] + 1] == enPassantSquare:
+            moves.append((i, i + 9, -3))
+
+        if mailbox[mailbox64[i] - 1] == enPassantSquare:
+            moves.append((i, i + 7, -3))
+
+
+
+
         if color[i + 8] == EMPTY:
-            moves.append((i, i + 8))
+            moves.append((i, i + 8, -2))
 
             if i >= 8 and i <= 15 and color[i + 16] == EMPTY:
-                moves.append((i, i + 16))
+                moves.append((i, i + 16, i + 16))
 
 
         if mailbox[mailbox64[i] + 11] != -1 and color[i + 9] == xSideToMove:
-            moves.append((i, i + 9))
+            moves.append((i, i + 9, -2))
         if mailbox[mailbox64[i] + 9] != -1 and color[i + 7] == xSideToMove:
-            moves.append((i, i + 7))
+            moves.append((i, i + 7, 1))
+
 
     if xSideToMove == WHITE:
+        if mailbox[mailbox64[i] + 1] == enPassantSquare:
+            moves.append((i, i - 7, -4))
+        
+        if mailbox[mailbox64[i] - 1] == enPassantSquare:
+            moves.append((i, i - 9, -4))
+
+
+
+
+
         if color[i - 8] == EMPTY:
-            moves.append((i, i - 8))
+            moves.append((i, i - 8, -2))
 
             if i >= 48 and i <= 55 and color[i - 16] == EMPTY:
-                moves.append((i, i - 16))
+                moves.append((i, i - 16, i + 16))
 
         if mailbox[mailbox64[i] - 11] != -1 and color[i - 9] == xSideToMove:
-            moves.append((i, i - 9))
+            moves.append((i, i - 9, -2))
         if mailbox[mailbox64[i] - 9] != -1 and color[i - 7] == xSideToMove:
-            moves.append((i, i - 7))
+            moves.append((i, i - 7, -2))
 
     return moves
 
@@ -35,7 +55,7 @@ def knightMoveGeneration(color, i, sideToMove):
     for offsetMove in offset[1]:
         square = mailbox[mailbox64[i] + offsetMove]
         if square != -1 and color[square] != sideToMove:
-            moves.append((i, square))
+            moves.append((i, square, -2))
 
     return moves
 
@@ -47,9 +67,9 @@ def bishopMoveGeneration(color, i, xSideToMove):
             if square == -1:
                 break
             elif color[square] == EMPTY:
-                moves.append((i, square))
+                moves.append((i, square, -2))
             elif color[square] == xSideToMove:
-                moves.append((i, square))
+                moves.append((i, square, -2))
                 break
             else:
                 break
@@ -64,9 +84,9 @@ def rookMoveGeneration(color, i, xSideToMove):
             if square == -1:
                 break
             elif color[square] == EMPTY:
-                moves.append((i, square))
+                moves.append((i, square, -2))
             elif color[square] == xSideToMove:
-                moves.append((i, square))
+                moves.append((i, square, -2))
                 break
             else:
                 break
@@ -81,9 +101,9 @@ def queenMoveGeneration(color, i, xSideToMove):
             if square == -1:
                 break
             elif color[square] == EMPTY:
-                moves.append((i, square))
+                moves.append((i, square, -2))
             elif color[square] == xSideToMove:
-                moves.append((i, square))
+                moves.append((i, square, -2))
                 break
             else:
                 break
@@ -95,7 +115,7 @@ def kingMoveGeneration(color, i, sideToMove):
     for offsetMove in offset[5]:
         square = mailbox[mailbox64[i] + offsetMove]
         if square != -1 and color[square] != sideToMove:
-            moves.append((i, square))
+            moves.append((i, square, -2))
 
     return moves
 
@@ -220,12 +240,12 @@ def checkIfMoveIsLegal(color, piece, sideToMove, xSideToMove, move):
 
     return True
 
-def moveGeneration(color, piece, sideToMove, xSideToMove):
+def moveGeneration(color, piece, sideToMove, xSideToMove, enPassantSquare = -2):
     potentialMoves = []
     for i in range(64):
         if color[i] == sideToMove:
             if piece[i] == PAWN:
-                potentialMoves += pawnMoveGeneration(color, i, xSideToMove)
+                potentialMoves += pawnMoveGeneration(color, i, xSideToMove, enPassantSquare)
             elif piece[i] == KNIGHT:
                 potentialMoves += knightMoveGeneration(color, i, sideToMove)
             elif piece[i] == BISHOP:

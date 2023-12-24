@@ -9,6 +9,14 @@ def generateBoard(color, piece, move):
     copyColor[move[0]] = EMPTY
     copyPiece[move[0]] = -1
 
+    if move[2] == -3:
+        copyColor[move[1] - 8] = EMPTY
+        copyPiece[move[1] - 8] = -1
+    elif move[2] == -4:
+        copyColor[move[1] + 8] = EMPTY
+        copyPiece[move[1] + 8] = -1
+
+
     return copyColor, copyPiece
 
 def printBoard(color, piece):
