@@ -238,6 +238,11 @@ def checkIfMoveIsLegal(color, piece, sideToMove, xSideToMove, move):
             else:
                 break
 
+    for i in offset[1]:
+        square = mailbox[mailbox64[kingSquare] + i]
+        if square != -1 and testColor[square] == xSideToMove and testPiece[square] == KNIGHT:
+            return False
+
     return True
 
 def moveGeneration(color, piece, sideToMove, xSideToMove, enPassantSquare = -2):
