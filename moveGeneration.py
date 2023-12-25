@@ -121,10 +121,7 @@ def kingMoveGeneration(color, i, sideToMove):
 
 
 
-
-
-def checkIfMoveIsLegal(color, piece, sideToMove, xSideToMove, move):
-    testColor, testPiece = generateBoard(color, piece, move)
+def notCheckIfBoardInCheck(testColor, testPiece, sideToMove, xSideToMove):
     for i in range(64):
         if testColor[i] == sideToMove and testPiece[i] == KING:
             kingSquare = i
@@ -244,6 +241,13 @@ def checkIfMoveIsLegal(color, piece, sideToMove, xSideToMove, move):
             return False
 
     return True
+
+def checkIfMoveIsLegal(color, piece, sideToMove, xSideToMove, move):
+    testColor, testPiece = generateBoard(color, piece, move)
+    
+    return notCheckIfBoardInCheck(testColor, testPiece, sideToMove, xSideToMove)
+
+    
 
 def moveGeneration(color, piece, sideToMove, xSideToMove, enPassantSquare = -2):
     potentialMoves = []

@@ -1,6 +1,8 @@
 from constantsChess import *
 
-def generateBoard(color, piece, move):
+def generateBoard(color, piece, move = None):
+    if move==None:
+        return color.copy(), piece.copy()
     copyColor = color.copy()
     copyPiece = piece.copy()
 
@@ -58,11 +60,11 @@ def printBoard(color, piece):
         print()
 
 
-def printMove(move):
+def getMove(move):
     file = "abcdefgh"[7 - (move[0] % 8)]
     rank = move[0] // 8
 
     file2 = "abcdefgh"[7 - (move[1] % 8)]
     rank2 = move[1] // 8
 
-    print(file + str(rank + 1) + " --> " + file2 + str(rank2 + 1))
+    return (file + str(rank + 1) + " --> " + file2 + str(rank2 + 1))

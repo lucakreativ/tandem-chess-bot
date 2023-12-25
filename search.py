@@ -1,4 +1,4 @@
-from moveGeneration import moveGeneration
+from moveGeneration import moveGeneration, notCheckIfBoardInCheck
 from boardOperation import *
 from evaluatePosition import evaluate
 
@@ -25,18 +25,24 @@ def maxi(color, piece, sideToMove, xSideToMove, move = None, depth = 0):
         enPassantSquare = move[2]
 
     moves = moveGeneration(color2, piece2, sideToMove, xSideToMove, enPassantSquare)
+    if len(moves) == 0:
+        if notCheckIfBoardInCheck(color2, piece2, sideToMove, xSideToMove):
+            return (0, "", 0)
+        else:
+            return (-100000000, "", 0)
+        
     for moveAfterGeneration in moves:
         score, returnedMove, notNeeded = mini(color2, piece2, xSideToMove, sideToMove, moveAfterGeneration, depth - 1)
         if score > max:
             max = score
             moveToReturn = getMove(moveAfterGeneration) + " " + returnedMove
-            print(max, moveToReturn)
             machineMove = moveAfterGeneration
             
 
     return (max, moveToReturn, machineMove)
 
 def mini(colorGet, pieceGet, sideToMove, xSideToMove, move = None, depth = 0, firstCall = False):
+
     moveToReturn = ""
     machineMove = None
 
@@ -55,7 +61,6 @@ def mini(colorGet, pieceGet, sideToMove, xSideToMove, move = None, depth = 0, fi
     else:
         color2, piece2 = generateBoard(colorGet, pieceGet, move)
 
-    printBoard(color2, piece2)
 
     if move == None:
         enPassantSquare = -2
@@ -63,6 +68,13 @@ def mini(colorGet, pieceGet, sideToMove, xSideToMove, move = None, depth = 0, fi
         enPassantSquare = move[2]
 
     moves = moveGeneration(color2, piece2, sideToMove, xSideToMove, enPassantSquare)
+
+    if len(moves) == 0:
+        if notCheckIfBoardInCheck(color2, piece2, sideToMove, xSideToMove):
+            return (0, "", 0)
+        else:
+            return (100000000, "", 0)
+
     for moveAfterGeneration in moves:
         score, returnedMove, notNeeded = maxi(color2, piece2, xSideToMove, sideToMove, moveAfterGeneration, depth - 1)
         if score < min:
